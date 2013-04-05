@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Comment organiser ses templates twig ?</title>
+
+        <meta name="description" content="Comment organiser ses templates twig ?"/>
+        <meta name="author" content="Grégoire pineau"/>
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/theme/solarized.css">
+
+        <!-- Custom -->
+        <link rel="stylesheet" href="assets/css/solarized.css">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="assets/css/solarized-light-highlight.css">
+
+        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <script>
+            document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div id="sl-bar"></div>
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+<section class="level1" id="comment-organiser-ses-templates-twig">
+<h1>Comment organiser ses templates twig ?</h1>
+<p>Grégoire Pineau - Symfony Live - Paris 2013</p>
+<figure>
+<img src="assets/twig-logo.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level1" id="section">
+<h1></h1>
+<section class="level2" id="sommaire">
+<h2>Sommaire</h2>
+<ol type="1">
+<li>Organisation des templates</li>
+<li>Mise en place de thème</li>
+</ol>
+</section>
+</section>
+<section class="level1" id="section-1">
+<h1></h1>
+<section class="level2" id="twig">
+<h2>Twig</h2>
+</section>
+<section class="level2" id="installation">
+<h2>Installation</h2>
+<pre><code>php composer.phar require twig/twig:~1.12</code></pre>
+</section>
+<section class="level2" id="configuration">
+<h2>Configuration</h2>
+<pre><code>// twig.php
+
+require __DIR__.&#39;/vendor/autoload.php&#39;;
+
+$loader = new Twig_Loader_Filesystem(array(__DIR__.&#39;/templates&#39;));
+
+$twig = new Twig_Environment($loader);</code></pre>
+</section>
+<section class="level2" id="utilisation">
+<h2>utilisation</h2>
+<p>Template:</p>
+<pre><code>{# hello.html.twig #}
+
+hello {{ name }}</code></pre>
+<p>Php:</p>
+<pre><code>// hello.php
+
+require __DIR__.&#39;/twig.php&#39;;
+
+echo $twig-&gt;render(&#39;hello.html.twig&#39;, array(&#39;name&#39; =&gt; &#39;greg&#39;));</code></pre>
+<p>Résultat:</p>
+<pre><code>hello greg</code></pre>
+</section>
+</section>
+<section class="level1" id="section-2">
+<h1></h1>
+<section class="level2" id="extends">
+<h2>Extends</h2>
+<p>Pourquoi ? Quand ?</p>
+</section>
+<section class="level2" id="extends---layout">
+<h2>Extends - Layout</h2>
+<figure>
+<img src="assets/extends-empty.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level2" id="extends---homepage">
+<h2>Extends - Homepage</h2>
+<figure>
+<img src="assets/extends-full.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level2" id="extends---layout-2">
+<h2>Extends - Layout #2</h2>
+<pre><code>{# layout.html.twig #}
+
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;{% block title &#39;&#39; %}&lt;/title&gt;
+        {% block meta &#39;&#39; %}
+        {% block css %}
+            &lt;style type=&quot;text/css&quot; src=&quot;/css/styles.css&quot;&gt;&lt;/style&gt;
+        {% endblock %}
+    &lt;/head&gt;
+    &lt;body&gt;
+        Navigation
+        Fil d&#39;arianne
+        {% block body &#39;&#39; %}
+        {% block javascripts &#39;&#39; %}
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+<section class="level2" id="extends---homepage-2">
+<h2>Extends - Homepage #2</h2>
+<pre><code>{# homepage.html.twig #}
+
+{% extends &#39;layout.html.twig&#39; %}
+
+{% block title &#39;Ma page&#39; %}
+
+{% block css %}
+    {{ parent() }}
+    &lt;style type=&quot;text/css&quot; src=&quot;/css/homepage.css&quot;&gt;&lt;/style&gt;
+{% endblock %}
+
+{% block body %}
+    Coverflow
+
+    Boutons
+{% endblock %}</code></pre>
+</section>
+<section class="level2" id="résultat">
+<h2>Résultat</h2>
+<pre><code>&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Ma page&lt;/title&gt;
+        &lt;style type=&quot;text/css&quot; src=&quot;/css/styles.css&quot;&gt;&lt;/style&gt;
+        &lt;style type=&quot;text/css&quot; src=&quot;/css/homepage.css&quot;&gt;&lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        Navigation
+        Fil d&#39;arrianne
+        Coverflow
+        Boutons
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+</section>
+<section class="level1" id="section-3">
+<h1></h1>
+<section class="level2" id="include">
+<h2>Include</h2>
+<p>Pourquoi ? Quand ?</p>
+</section>
+<section class="level2" id="include-statique-1">
+<h2>Include statique #1</h2>
+<figure>
+<img src="assets/include-static.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level2" id="include-statique-2">
+<h2>Include statique #2</h2>
+<pre><code>{# qui-sommes-nous.html.twig #}
+
+&lt;div&gt;
+    Qui sommes nous ?
+&lt;/div&gt;</code></pre>
+<p>::</p>
+<pre><code>{# homepage.html.twig #}
+
+&lt;div&gt;
+    New
+&lt;/div&gt;
+
+&lt;div&gt;
+    Derniers Commentaires
+&lt;/div&gt;
+
+{{ include(&#39;qui-sommes-nous.html.twig&#39;) }}</code></pre>
+</section>
+<section class="level2" id="include-dynamique-1">
+<h2>Include dynamique #1</h2>
+<figure>
+<img src="assets/include-dynamic.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level2" id="include-dynamique-2">
+<h2>Include dynamique #2</h2>
+<pre><code>{# news.html.twig #}
+
+{% for post in posts %}
+    {{ include(&#39;post.html.twig&#39;, { post: post }, with_context = false) }}
+{% endfor %}</code></pre>
+<p>::</p>
+<pre><code>{# post.html.twig #}
+
+&lt;div&gt;
+    &lt;h3&gt;{{ post.title}}&lt;/h3&gt;
+    &lt;div&gt;{{ post.content }}&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</section>
+<section class="level2" id="include-1">
+<h2>Include</h2>
+<ul>
+<li>Re-utilisation de code HTML</li>
+<li>Découpage fonctionnel (header / footer)</li>
+<li>Dynamique</li>
+<li>Structure HTML non flexible</li>
+<li><strong>Ne passer pas des flags pour ajouter de la flexibilité</strong></li>
+</ul>
+</section>
+<section class="level2" id="tips">
+<h2>Tips</h2>
+<ul>
+<li>N'utiliser plus le tag, mais la fonction</li>
+<li><strong>Pensez à isoler vos include</strong></li>
+</ul>
+</section>
+</section>
+<section class="level1" id="section-4">
+<h1></h1>
+<section class="level2" id="use">
+<h2>Use</h2>
+<p>Pourquoi ? Quand ?</p>
+</section>
+<section class="level2" id="use-1">
+<h2>Use #1</h2>
+<figure>
+<img src="assets/use-static.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level2" id="use-2">
+<h2>Use #2</h2>
+<pre><code>{# blocks.html.twig #}
+
+{% block qui_sommes_nous %}
+    &lt;div&gt;
+        Qui sommes nous ?
+    &lt;/div&gt;
+{% endblock %}</code></pre>
+<p>::</p>
+<pre><code>{# homepage.html.twig #}
+
+{# ... #}
+
+{% use &quot;blocks.html.twig&quot; %}
+
+{{ block(&#39;qui_sommes_nous&#39;) }}
+
+{# OU #}
+
+{% block qui_sommes_nous %}
+    &lt;div class=&quot;container&quot;&gt;
+        {{ parent() }}
+    &lt;/div&gt;
+{% endblock %}</code></pre>
+</section>
+<section class="level2" id="use-3">
+<h2>Use</h2>
+<ul>
+<li>Ré-utilisation de code HTML</li>
+<li>Découpage fonctionnel (header / footer)</li>
+<li>Non dynamique</li>
+<li>Structure HTML non flexible</li>
+<li>Permet de partager plusieurs morceaux d'HTML dans le même fichier</li>
+<li>=&gt; Peu utilisé</li>
+</ul>
+</section>
+</section>
+<section class="level1" id="section-5">
+<h1></h1>
+<section class="level2" id="embed">
+<h2>Embed</h2>
+<p>Pourquoi ? Quand ?</p>
+</section>
+<section class="level2" id="embed-1">
+<h2>Embed #1</h2>
+<figure>
+<img src="assets/embed-list.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level2" id="embed-2">
+<h2>Embed #2</h2>
+<figure>
+<img src="assets/embed-home.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="level2" id="embed---liste">
+<h2>Embed - liste</h2>
+<pre><code>{# news.html.twig #}
+
+{% for post in posts %}
+    {% embed &quot;post.html.twig&quot; with { post: post } only %}{% endembed %}
+{% endfor %}</code></pre>
+</section>
+<section class="level2" id="embed---post">
+<h2>Embed - Post</h2>
+<pre><code>{# post.html.twig #}
+
+&lt;div&gt;
+    {% block title %}&lt;h3&gt;{{ post.title}}&lt;/h3&gt;{% endblock %}
+
+    {% block content%}&lt;div&gt;{{ post.content }}&lt;/div&gt;{% endblock %}
+
+    {% block metas %}
+        &lt;p&gt;Par {{ post.author }} le {{ post.date }}&lt;/p&gt;
+    {% endblock %}
+
+    {% block comments %}
+        &lt;p&gt;il y a {{ post.comment|length }} commentaires&lt;/p&gt;
+    {% endblock %}
+&lt;/div&gt;</code></pre>
+</section>
+<section class="level2" id="embed---home">
+<h2>Embed - home</h2>
+<pre><code>{# homepage.html.twig #}
+
+&lt;div&gt;
+    {% embed &quot;embed/post.html.twig&quot; with { post: posts|last } only %}
+
+        {% block title %}
+            &lt;h1&gt;{{ post.title}}&lt;/h1&gt;
+        {% endblock %}
+
+        {% block comments %}
+            {{ parent() }}&lt;p&gt;Lire les commentaire&lt;/p&gt;
+        {% endblock %}
+
+    {% endembed %}
+&lt;/div&gt;
+
+&lt;div&gt;
+    Derniers Commentaires
+&lt;/div&gt;
+
+{{ include(&#39;include/qui-sommes-nous.html.twig&#39;) }}</code></pre>
+</section>
+<section class="level2" id="embed-3">
+<h2>Embed</h2>
+<ul>
+<li>Ré-utilisation de code HTML</li>
+<li>Découpage fonctionnel (header / footer)</li>
+<li>Dynamique</li>
+<li><strong>Flexible</strong></li>
+</ul>
+</section>
+<section class="level2" id="embed---tips">
+<h2>Embed - Tips</h2>
+<ul>
+<li>Ajouter autant de blocks que possible</li>
+<li><strong>Pensez à isoler vos embed</strong></li>
+</ul>
+</section>
+</section>
+<section class="level1" id="section-6">
+<h1></h1>
+<section class="level2" id="macros">
+<h2>Macros</h2>
+<p>Pourquoi ? Quand ?</p>
+</section>
+<section class="level2" id="macros-1">
+<h2>Macros #1</h2>
+<pre><code>{% macro input(name, type = &#39;text&#39;, value = &#39;&#39;,  size = &#39;20&#39;) %}
+    {% spaceless %}
+        &lt;input type=&quot;{{ type }}&quot; name=&quot;{{ name }}&quot; value=&quot;{{ value|e }}&quot;
+            size=&quot;{{ size }}&quot; /&gt;
+    {% endspaceless %}
+{% endmacro %}
+
+{% import _self as forms %}
+{# ou #}
+{% import &#39;forms.html.twig&#39; as forms %}
+
+{{ forms.input(&#39;user&#39;) }}
+{{ forms.input(&#39;email&#39;, &#39;email&#39;) }}</code></pre>
+</section>
+<section class="level2" id="macros-2">
+<h2>Macros</h2>
+<ul>
+<li>Génération de code HTML</li>
+<li>Dynamique</li>
+<li>Flexible</li>
+</ul>
+</section>
+</section>
+<section class="level1" id="section-7">
+<h1></h1>
+<section class="level2" id="include-use-embed-macro">
+<h2>Include / Use / Embed / Macro</h2>
+<p>Vous voulez:</p>
+<ul>
+<li>Génerer du code HTML dynamiquement : <strong>macros</strong></li>
+<li>Découper votre template en (sous) templates (fonctionnel) : <strong>include</strong></li>
+<li>Mutualiser du code HTML entre plusieurs templates : <strong>include</strong></li>
+<li>Mutualiser et customiser du code HTML entre plusieurs templates : <strong>embed</strong></li>
+</ul>
+<p>Note:</p>
+<p>Les fonctions twig ne sont pas faites pour générer du HTML ; Il en sera question un peu plus loin</p>
+</section>
+</section>
+<section class="level1" id="section-8">
+<h1></h1>
+<section class="level2" id="theming">
+<h2>Theming</h2>
+<p>Comment construire un systeme de thème ?</p>
+<p><strong>Use case</strong>:</p>
+<ul>
+<li>Création de plusieurs sites avec un design approchant (&quot;presque&quot; semblable)</li>
+<li>Création d'un CMS / blog open source</li>
+<li>Sites en marque blanche</li>
+</ul>
+</section>
+<section class="level2" id="architecture">
+<h2>Architecture</h2>
+<pre><code>themes
+├── default
+│   ├── footer.html.twig
+│   ├── header.html.twig
+│   ├── homepage.html.twig
+│   └── layout.html.twig
+└── my_theme
+    └── header.html.twig</code></pre>
+</section>
+<section class="level2" id="thème-par-défaut-layout">
+<h2>Thème par défaut / layout</h2>
+<pre><code>{# default/layout.html.twig #}
+
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;{% block title &#39;&#39; %}&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        {{ include(&#39;logo.html.twig&#39;) }}
+
+        {% block content &#39;&#39; %}
+
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+<section class="level2" id="thème-par-défaut-templates">
+<h2>Thème par défaut / templates</h2>
+<pre><code>{# default/homepage.html.twig #}
+
+{% extends &#39;layout.html.twig&#39; %}
+
+{% block content %}
+    Du contenu
+{% endblock %}</code></pre>
+<p>::</p>
+<pre><code>{# default/logo.html.twig #}
+
+&lt;img src=&quot;logo.png&quot;&gt;</code></pre>
+</section>
+<section class="level2" id="mon-thème-remplacement">
+<h2>Mon thème / Remplacement</h2>
+<pre><code>{# my_theme/logo.html.twig #}
+
+&lt;h1&gt;Mon site&lt;/h1&gt;
+&lt;img src=&quot;mon-logo.png&quot;&gt;</code></pre>
+</section>
+<section class="level2" id="résultat-1">
+<h2>Résultat</h2>
+<pre><code>&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Mon site&lt;/h1&gt;
+        &lt;img src=&quot;mon-logo.png&quot;&gt;
+
+        Du contenu
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+<section class="level2" id="comment-ça-marche">
+<h2>Comment ça marche ?</h2>
+<pre><code>require __DIR__.&#39;/vendor/autoload.php&#39;;
+
+$loader = new Twig_Loader_Filesystem(array(
+    __DIR__.&#39;/templates/theming/my_theme&#39;,
+    __DIR__.&#39;/templates/theming/default&#39;,
+));
+
+$twig = new Twig_Environment($loader);
+
+echo $twig-&gt;render(&#39;homepage.html.twig&#39;); // &lt;--- /!\ Attention</code></pre>
+</section>
+<section class="level2" id="comment-étendre-la-template-de-base-1">
+<h2>Comment étendre la template de base ? #1</h2>
+<pre><code>themes
+├── default
+│   ├── footer.html.twig
+│   ├── header.html.twig
+│   ├── homepage.html.twig
+│   └── layout.html.twig
+└── my_theme
+    ├── homepage.html.twig
+    └── header.html.twig</code></pre>
+</section>
+<section class="level2" id="comment-étendre-la-template-de-base-2">
+<h2>Comment étendre la template de base ? #2</h2>
+<pre><code>{# my_theme/homepage.html.twig #}
+
+{% extends &#39;default/homepage.html.twig&#39; %}
+
+{% block content %}
+    &lt;div class=&quot;container&quot;&gt;
+        {{ parent() }}
+    &lt;/div&gt;
+{% endblock %}</code></pre>
+</section>
+<section class="level2" id="comment-étendre-la-template-de-base-3">
+<h2>Comment étendre la template de base ? #3</h2>
+<p>Il faut ajouter le répertoire commun aux deux dossiers de thème :</p>
+<pre><code>require __DIR__.&#39;/vendor/autoload.php&#39;;
+
+$loader = new Twig_Loader_Filesystem(array(
+    __DIR__.&#39;/templates/theming/my_theme&#39;,
+    __DIR__.&#39;/templates/theming/default&#39;,
+    __DIR__.&#39;/templates/theming&#39;,          // &lt;---- HERE
+));
+
+$twig = new Twig_Environment($loader);
+
+echo $twig-&gt;render(&#39;homepage.html.twig&#39;);</code></pre>
+</section>
+<section class="level2" id="remarque">
+<h2>Remarque</h2>
+<p>Mais pourquoi Wordpress n'utilise pas twig pour ses templates ??????????????????</p>
+</section>
+</section>
+<section class="level1" id="section-9">
+<h1></h1>
+<section class="level2" id="block-theming-1">
+<h2>Block Theming #1</h2>
+<p>Comment personaliser l'affichage des fonctions twig ?</p>
+<p><strong>Use case</strong>:</p>
+<ul>
+<li>Fil d'arianne</li>
+<li>Menu contextuel</li>
+<li>Embed de flash player</li>
+<li>Slider</li>
+<li>Pagination</li>
+</ul>
+<hr>
+<p><em>Note</em>: Ici un <code>include</code> / <code>embed</code> ne peut pas suffir, car il y a potentiellement des besoins métiers (appel à la BDD, ...) qui ne peuvent / doivent pas etre fait depuis une template.</p>
+</section>
+<section class="level2" id="block-theming-2">
+<h2>Block Theming #2</h2>
+<pre><code>{# layout.html.twig #}
+
+{{ display_menu(page|default(null)) }}</code></pre>
+<p>::</p>
+<pre><code>&lt;!-- Résultat --&gt;
+
+&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;A&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;B&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;C&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+</section>
+<section class="level2" id="block-theming-2-1">
+<h2>Block Theming #2</h2>
+<ul>
+<li><p><code>display_menu</code> est une fonction twig qui va générer du contenu HTML.</p></li>
+<li><p>Nous voulons un support pour <code>display_menu</code>, <code>display_flash</code>, <code>display_pagination</code>, <code>display_slider</code>, <code>display_*</code></p></li>
+</ul>
+<hr>
+<ul>
+<li><p>Pour ajouter ces fonctions à twig, Nous allons:</p>
+<ol type="1">
+<li>Créer une extension twig</li>
+<li>Créer une template contenant les blocks <code>menu</code>, <code>flash</code>, <code>pagination</code>, <code>slider</code>, ...</li>
+<li>Utiliser les fonctions <code>display_*</code></li>
+</ol></li>
+</ul>
+</section>
+<section class="level2" id="block-theming---mise-en-place-de-lextension-1">
+<h2>Block Theming - Mise en place de l'extension #1</h2>
+<pre><code>class DisplayExtension extends \Twig_Extension
+{
+    private $themes;
+
+    public function __construct(array $themes = array())
+    {
+        $this-&gt;themes = $themes;
+    }
+}</code></pre>
+</section>
+<section class="level2" id="block-theming---mise-en-place-de-lextension-2">
+<h2>Block Theming - Mise en place de l'extension #2</h2>
+<pre><code>public function getFunctions()
+{
+    return array(
+        new \Twig_SimpleFunction(
+            &#39;display_menu&#39;,
+            array($this, &#39;displayBlock&#39;),
+            array(&#39;needs_environment&#39; =&gt; true, &#39;is_safe&#39; =&gt; array(&#39;html&#39;))
+        ),
+    );
+}</code></pre>
+</section>
+<section class="level2" id="block-theming---mise-en-place-de-lextension-3">
+<h2>Block Theming - Mise en place de l'extension #3</h2>
+<pre><code>public function displayBlock(\Twig_Environment $env, $block = &#39;menu&#39;, $parameters = array())
+{
+    foreach ($this-&gt;themes as $theme) {
+        if ($theme instanceof \Twig_Template) {
+            $template = $theme;
+        } else {
+            $template = $env-&gt;loadTemplate($theme);
+        }
+        if ($template-&gt;hasBlock($block)) {
+            return $template-&gt;renderBlock($block, $parameters);
+        }
+    }
+
+    throw new \InvalidArgumentException(&#39;Unable to find block &#39;.$block);
+}</code></pre>
+<p><strong>Attention</strong>: Ici on utilise une partie de l'API de twig qui n'est pas publique *</p>
+</section>
+<section class="level2" id="block-theming---mise-en-place-de-lextension-4">
+<h2>Block Theming - Mise en place de l'extension #4</h2>
+<pre><code>$twig-&gt;addExtension(new DisplayExtension(array(&#39;display.html.twig&#39;)));</code></pre>
+</section>
+<section class="level2" id="block-theming---création-dun-thème-par-default">
+<h2>Block Theming - Création d'un thème par default</h2>
+<pre><code>{# display.html.twig ; Notre template de blocks #}
+
+{% block menu %}
+{% spaceless %}
+    &lt;nav&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;a href=&quot;#&quot;&gt;A&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;#&quot;&gt;B&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;#&quot;&gt;C&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+{% endspaceless %}
+{% endblock %}
+
+{% block pagination %}
+{# ... #}
+
+{% block slider %}
+{# ... #}
+
+{% block flash %}
+{# ... #}</code></pre>
+</section>
+<section class="level2" id="block-theming---mise-en-place-de-lextension---refacto-1">
+<h2>Block Theming - Mise en place de l'extension - Refacto #1</h2>
+<pre><code>public function getFunctions()
+{
+    return array(
+        new \Twig_SimpleFunction(
+            &#39;display_menu&#39;,
+            array($this, &#39;displayMenu&#39;),
+            array(&#39;needs_environment&#39; =&gt; true, &#39;is_safe&#39; =&gt; array(&#39;html&#39;))
+        ),
+        new \Twig_SimpleFunction(
+            &#39;display_*&#39;,
+            array($this, &#39;displayBlock&#39;),
+            array(&#39;needs_environment&#39; =&gt; true, &#39;is_safe&#39; =&gt; array(&#39;html&#39;))
+        ),
+    );
+}</code></pre>
+</section>
+<section class="level2" id="block-theming---mise-en-place-de-lextension---refacto-2">
+<h2>Block Theming - Mise en place de l'extension - Refacto #2</h2>
+<pre><code>public function displayMenu(\Twig_Environment $env, $page = null)
+{
+    // Do what you need HERE.
+
+    return $this-&gt;displayBlock($env, &#39;menu&#39;, array(&#39;page&#39; =&gt; $page));
+}</code></pre>
+</section>
+<section class="level2" id="block-theming---création-dun-tag-pour-changer-le-thème">
+<h2>Block Theming - Création d'un tag pour changer le thème</h2>
+<p>Il faut ajouter un tag, qui va ajouter <strong>à la compilation</strong> un nouveau thème pour la template courante.</p>
+<p>Le code est un peu compliqué, mais il sera dans le dépôt ;)</p>
+</section>
+<section class="level2" id="block-theming---création-dun-tag-pour-changer-le-thème-2">
+<h2>Block Theming - Création d'un tag pour changer le thème #2</h2>
+<pre><code>{# page.html.twig #}
+
+{% extends &#39;layout.html.twig&#39; %}
+
+{% display_theme _self %}
+
+{% block menu %}
+    &lt;h6&gt;Menu:&lt;/h6&gt;
+
+    &lt;nav class=&quot;class4&quot;&gt;
+        &lt;ul class=&quot;class5&quot;&gt;
+            &lt;li&gt;&lt;a href=&quot;#&quot;&gt;A&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;#&quot;&gt;B&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;#&quot;&gt;C&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+{% endblock %}
+
+{{ display_menu(page|default(null)) }}</code></pre>
+</section>
+<section class="level2" id="block-theming---création-dun-tag-pour-changer-le-thème-3">
+<h2>Block Theming - Création d'un tag pour changer le thème #3</h2>
+<pre><code>&lt;!-- Résultat --&gt;
+&lt;h6&gt;Menu:&lt;/h6&gt;
+
+&lt;nav class=&quot;class4&quot;&gt;
+    &lt;ul class=&quot;class5&quot;&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;A&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;B&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;C&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+</section>
+</section>
+<section class="level1" id="section-10">
+<h1></h1>
+<section class="level2" id="merci-des-questions">
+<h2>Merci ! Des questions ?</h2>
+</section>
+</section>
+<section class="level1" id="section-11">
+<h1></h1>
+<p>Les slides:</p>
+<ul>
+<li><a href="https://github.com/lyrixx/SFLive-Paris2013-Twig">https://github.com/lyrixx/SFLive-Paris2013-Twig</a></li>
+</ul>
+<hr>
+<p>Sinon:</p>
+<ul>
+<li><a href="http://twitter.com/lyrixx">http://twitter.com/lyrixx</a></li>
+<li><a href="http://github.com/lyrixx">http://github.com/lyrixx</a></li>
+<li><a href="http://blog.lyrixx.info">http://blog.lyrixx.info</a></li>
+</ul>
+<hr>
+<p>Et:</p>
+<ul>
+<li><a href="http://sensiolabs.com/fr/nous_rejoindre/pourquoi_nous_rejoindre.html">SensioLabs Recrute</a></li>
+</ul>
+</section>
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: false,
+                progress: true,
+                history: true,
+                center: true,
+
+                width: 1020,
+                height: 700,
+
+
+                // theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                theme: null, // loaded by <style> element in <head>
+                transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'assets/js/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                    // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+                    // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>
