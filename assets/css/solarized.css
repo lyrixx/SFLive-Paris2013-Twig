@@ -1,0 +1,20 @@
+.reveal section img {
+  border: 0;
+}
+
+.reveal pre code {
+  max-height: 600px;
+}
+
+#sl-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #000 url('../sensiolabs.png') no-repeat 5px 0px;
+    height: 45px;
+    width: 100%;
+}
+.reveal .progress span {
+  background-color: #82e83e;
+}

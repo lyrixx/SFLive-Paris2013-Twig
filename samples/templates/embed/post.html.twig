@@ -1,0 +1,17 @@
+<div>
+    {% block title %}
+        <h3>{{ post.title}}</h3>
+    {% endblock %}
+
+    {% block content%}
+        <div>{{ post.content }}</div>
+    {% endblock %}
+
+    {% block metas %}
+        <p>Par {{ post.author }} le {{ post.date }}</p>
+    {% endblock %}
+
+    {% block comments %}
+        <p>il y a {{ post.comment|length }} commentaires</p>
+    {% endblock %}
+</div>

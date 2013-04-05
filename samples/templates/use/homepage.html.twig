@@ -1,0 +1,14 @@
+{# homepage.html.twig #}
+
+<div>New</div>
+<div>Derniers Commentaires</div>
+
+{% use 'blocks.html.twig' %}
+
+{% block qui_sommes_nous %}
+    {{ parent() }}
+{% endblock %}
+
+{# OU #}
+
+{{ block('qui_sommes_nous') }}

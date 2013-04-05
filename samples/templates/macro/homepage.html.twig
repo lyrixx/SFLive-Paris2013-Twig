@@ -1,0 +1,10 @@
+{% macro input(name, type = 'text', value = '',  size = '20') %}
+{% spaceless %}
+    <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="{{ size }}" />
+{% endspaceless %}
+{% endmacro %}
+
+{% import _self as forms %}
+
+{{ forms.input('user') }}
+{{ forms.input('email', 'email') }}

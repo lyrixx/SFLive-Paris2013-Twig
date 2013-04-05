@@ -1,0 +1,4 @@
+{% for post in posts %}
+    {% embed "post.html.twig" with { post: post } only %}
+    {% endembed %}
+{% endfor %}

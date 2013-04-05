@@ -1,0 +1,13 @@
+{
+    "name": "lyrixx/twig-exemples",
+    "description": "Some samples with twig",
+    "authors": [
+        {
+            "name": "Grégoire Pineau",
+            "email": "lyrixx@lyrixx.info"
+        }
+    ],
+    "require": {
+        "twig/twig": "~1.12"
+    }
+}

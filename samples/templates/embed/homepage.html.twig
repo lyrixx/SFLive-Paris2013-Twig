@@ -1,0 +1,19 @@
+{# homepage.html.twig #}
+
+<div>
+    {% embed "post.html.twig" with { post: posts|last } only %}
+
+        {% block title %}
+            <h1>{{ post.title}}</h1>
+        {% endblock %}
+
+        {% block comments %}
+            {{ parent() }}<p>Lire les commentaire</p>
+        {% endblock %}
+
+    {% endembed %}
+</div>
+
+<div>
+    Derniers Commentaires
+</div>

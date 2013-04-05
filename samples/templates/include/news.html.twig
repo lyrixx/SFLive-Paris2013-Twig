@@ -1,0 +1,3 @@
+{% for post in posts %}
+    {{ include('post.html.twig', { post: post }, with_context = false) }}
+{% endfor %}
